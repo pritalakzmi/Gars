@@ -1,8 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ScrollView, TouchableOpacity, _View, SafeAreaView } from 'react-native';
 import { fontType, colors } from '../../theme';
+import { ListBlog } from '../../components';
 
 export default function Product() {
+    // const { blogId } = route.params;
+    // const styles = ListBlog.find(blog => blog.id === blogId);
+    // const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={styles.container}>

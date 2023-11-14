@@ -10,12 +10,12 @@ export default function Profile() {
                     <Image source={require('../../assets/images/prita.jpg')} style={styleProfileImage.image} />
                     <Text style={styles.text1}>pritalakzmi</Text>
                 </View>
-            </ScrollView>
             <ButtonEdit />
             <ButtonLike />
             <ButtonPurchaseHistory />
             <ButtonHelpReport/>
             <ButtonSetUp/>
+            </ScrollView>
         </View>
     );
 }

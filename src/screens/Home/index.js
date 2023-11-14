@@ -1,27 +1,33 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Image, ScrollView, _View } from 'react-native';
-// import { fontType, colors } from './src/theme';
-// import { ListBlog } from './src/components';
+import { StyleSheet, Text, View, TextInput, Image, ScrollView, _View, TouchableOpacity } from 'react-native';
 import { fontType, colors } from '../../theme';
-// import { ListBlog, ItemProduct } from '../../components';
 import { ListBlog } from '../../components';
 
 export default function Home() {
   return (
     <View style={styles.container}>
-      <Header />
       <ScrollView>
+      <Header />
         <SearchBar />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={categoryItem.categoryList}>
-          <CategoryItem title={"Popular"} />
-          <CategoryItem title={"New Product"} />
-          <CategoryItem title={"Jersey"} />
-          <CategoryItem title={"Ball"} />
-          <CategoryItem title={"Jacket"} />
-          <CategoryItem title={"Bag"} />
+          <TouchableOpacity>
+            <CategoryItem title={"Popular"} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <CategoryItem title={"New Product"} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <CategoryItem title={"Promo"} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <CategoryItem title={"Merchandise"} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <CategoryItem title={"Jersey"} />
+          </TouchableOpacity>
         </ScrollView>
         {/* <ListBlog /> */}
-        <ListBlog data={ blogData } />
+        <ListBlog data={blogData} />
       </ScrollView>
     </View >
   );
@@ -33,9 +39,9 @@ const Header = () => {
       <View style={header.containerText}>
         <Text style={header.textHeader}>Gars</Text>
       </View>
-      <View style={header.containerIcon}>
-        <Image source={require('./src/assets/images/iconMart.png')} style={search.searchIcon} />
-      </View>
+      <TouchableOpacity style={header.containerIcon}>
+      <Image source={require('../../assets/images/iconNotification.png')} style={notification.notificationIcon} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -44,7 +50,7 @@ const SearchBar = () => {
   return (
     <View style={search.searchBarContainer}>
       <View style={search.searchBarIconContainer}>
-        <Image source={require('./src/assets/images/iconSearch.png')} style={search.searchIcon} />
+        <Image source={require('../../assets/images/iconSearch.png')} style={search.searchIcon} />
       </View>
       <TextInput
         style={search.searchInput}
@@ -63,34 +69,37 @@ const CategoryItem = ({ title }) => {
   );
 };
 
-
 // const ListBlog = () => {
-  const blogData = [
-    {
-      title: 'Jersey Merah Anak-Anak',
-      // description: '',
-      image: require('./src/assets/images/janakmerah.png'),
-      price: "Rp. 299.000",
-    },
-    {
-      title: 'Jersey Merah Dewasa',
-      // description: '',
-      image: require('./src/assets/images/jdewasamerah.jpeg'),
-      price: "Rp. 399.000",
-    },
-    {
-      title: 'Jersey Putih Anak-Anak',
-      // description: '',
-      image: require('./src/assets/images/janakputih.png'),
-      price: "Rp. 299.000",
-    },
-    {
-      title: 'Jersey Putih Dewasa',
-      // description: '',
-      image: require('./src/assets/images/jdewasaputih.jpg'),
-      price: "Rp. 299.000",
-    },
-  ];
+const blogData = [
+  {
+    id:1,
+    title: 'Jersey Merah Anak-Anak',
+    // description: '',
+    image: require('../../assets/images/janakmerah.png'),
+    price: "Rp. 299.000",
+  },
+  {
+    id:2,
+    title: 'Jersey Merah Dewasa',
+    // description: '',
+    image: require('../../assets/images/jdewasamerah.jpeg'),
+    price: "Rp. 399.000",
+  },
+  {
+    id:3,
+    title: 'Jersey Putih Anak-Anak',
+    // description: '',
+    image: require('../../assets/images/janakputih.png'),
+    price: "Rp. 299.000",
+  },
+  {
+    id:4,
+    title: 'Jersey Putih Dewasa',
+    // description: '',
+    image: require('../../assets/images/jdewasaputih.jpg'),
+    price: "Rp. 299.000",
+  },
+];
 
 //   return (
 //     <ScrollView contentContainerStyle={catalog.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -126,25 +135,20 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
 const header = StyleSheet.create({
   containerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Add justifyContent property
+    justifyContent: 'space-between', 
     marginTop: 5,
     padding: 10,
     height: 90,
-    // backgroundColor: 'black',
   },
   containerText: {
-    // backgroundColor: 'red',
-    // paddingLeft: 10,
-    marginLeft: 10,
+    marginLeft: 20,
   },
   textHeader: {
-    fontFamily: 'CS-BoldItalic',
+    fontFamily: fontType['Pjs-ExtraBold'],
     fontSize: 32,
     color: colors.red,
   },
@@ -156,7 +160,7 @@ const header = StyleSheet.create({
 
 const search = StyleSheet.create({
   searchBarContainer: {
-    top: 20,
+    top: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#D8D9DA',
@@ -164,11 +168,9 @@ const search = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     paddingLeft: 35, // Adjust the padding for icon alignment
-
   },
   searchIconContainer: {
     marginLeft: 20,
-
   },
   searchIcon: {
     width: 20,
@@ -183,11 +185,30 @@ const search = StyleSheet.create({
   },
 });
 
+const notification = StyleSheet.create({
+  notificationBarContainer: {
+    top: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#D8D9DA',
+    borderRadius: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    paddingLeft: 35, // Adjust the padding for icon alignment
+  },
+  notificationIconContainer: {
+    marginLeft: 20,
+  },
+  notificationIcon: {
+    width: 20,
+    height: 20,
+  },
+});
+
 const categoryItem = StyleSheet.create({
   categoryList: {
-    flexDirection: 'row',  // Set flexDirection to 'row'
-    // backgroundColor: 'black',
-    marginTop: 30,
+    flexDirection: 'row', 
+    marginTop: 0,
     padding: 10,
     maxHeight: 90,
   },

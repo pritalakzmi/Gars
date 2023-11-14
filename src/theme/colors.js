@@ -8,6 +8,7 @@ const colors = {
     deepGray : '#E1F0D7',
     deepstGray : 'C4C4C4',
     subGreen : '#EEFAE6',
+    redblood : '#7E3517',
     grey: (opacity = 1) => `rgba(109, 125, 154, ${opacity})`,
     blue: (opacity = 1) => `rgba(53, 88, 225, ${opacity})`,
     lightCoral: (opacity = 1) => `rgba(240, 128, 128), ${opacity})`,
