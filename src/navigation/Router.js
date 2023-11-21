@@ -1,9 +1,8 @@
-import React, { Profiler } from 'react';
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Home, Product, Profile } from '../screens';
-import { Home2, DiscountShape, Bag, MessageText1, UserCirlceAdd, ProfileAdd, ProfileCircle, Profile2User, ProfileTick } from 'iconsax-react-native';
-// import {Home2, DiscountShape, Bag, MessageText1} from 'iconsax-react-native';
+import React from 'react';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Home, BlogOrder, Profile, BlogDetail} from '../screens';
+import {DiscountCircle, Home2, ProfileCircle, TruckFast} from 'iconsax-react-native'; 
 import { fontType, colors } from '../theme';
 
 const Tab = createBottomTabNavigator();
@@ -13,7 +12,7 @@ function MainApp() {
     <Tab.Navigator
       screenOptions={{
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: 'red',
+        tabBarActiveTintColor: colors.red(0.5),
         tabBarInactiveTintColor: colors.black(),
         tabBarStyle: {
           paddingBottom: 10,
@@ -31,7 +30,7 @@ function MainApp() {
         component={Home}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({ focused, color }) => (
+          tabBarIcon: ({focused, color}) => (
             <Home2
               color={color}
               variant={focused ? 'Bold' : 'Linear'}
@@ -42,11 +41,41 @@ function MainApp() {
         }}
       />
       <Tab.Screen
+        name="My Order"
+        component={BlogOrder}
+        options={{
+          tabBarLabel: 'My Order',
+          tabBarIcon: ({focused, color}) => (
+            <TruckFast
+              color={color}
+              variant={focused ? 'Bold' : 'Linear'}
+              size={24}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+      {/* <Tab.Screen
+        name="Promo"
+        component={Promo}
+        options={{
+          tabBarLabel: 'Promo',
+          tabBarIcon: ({focused, color}) => (
+            <DiscountCircle
+              color={color}
+              variant={focused ? 'Bold' : 'Linear'}
+              size={24}
+            />
+          ),
+          headerShown: false,
+        }}
+      /> */}
+      <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ focused, color }) => (
+          tabBarIcon: ({focused, color}) => (
             <ProfileCircle
               color={color}
               variant={focused ? 'Bold' : 'Linear'}
@@ -57,7 +86,6 @@ function MainApp() {
         }}
       />
     </Tab.Navigator>
-
   );
 }
 const Router = () => {
@@ -66,17 +94,17 @@ const Router = () => {
       <Stack.Screen
         name="MainApp"
         component={MainApp}
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
       />
       <Stack.Screen
-        name="Product"
-        component={Product}
+        name="BlogDetail"
+        component={BlogDetail}
         options={{
-          headerShown: false,
+          headerShown: false, 
           animationEnabled: true,
           animationTypeForReplace: 'pop',
           gestureEnabled: true,
-          gestureDirection: 'horizontal',
+          gestureDirection : 'horizontal',
           ...TransitionPresets.SlideFromRightIOS,
         }}
       />

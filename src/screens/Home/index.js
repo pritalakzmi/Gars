@@ -1,276 +1,204 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, Image, ScrollView, _View, TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import {ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
+import {Element3, SearchNormal1, ShoppingCart} from 'iconsax-react-native';
+import {BlogKids, BlogMan, CategoryList} from '../../../data';
 import { fontType, colors } from '../../theme';
-import { ListBlog } from '../../components';
+import { ListKids, ListMan} from '../../components';
 
 export default function Home() {
   return (
     <View style={styles.container}>
-      <ScrollView>
-      <Header />
-        <SearchBar />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={categoryItem.categoryList}>
-          <TouchableOpacity>
-            <CategoryItem title={"Popular"} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <CategoryItem title={"New Product"} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <CategoryItem title={"Promo"} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <CategoryItem title={"Merchandise"} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <CategoryItem title={"Jersey"} />
-          </TouchableOpacity>
-        </ScrollView>
-        {/* <ListBlog /> */}
-        <ListBlog data={blogData} />
-      </ScrollView>
-    </View >
+      <View style={styles.header}>
+        <Text style={styles.title}>Gars</Text>
+        <ShoppingCart color={colors.darkred()} variant="Linear" size={24} />
+      </View>
+      <View style={styles.header}>
+        <View style={styles.bar}>
+          <SearchNormal1 size={18} color={colors.grey(0.5)} variant="Linear" />
+          <Text style={styles.placeholder}>Search</Text>
+        </View>
+      </View>
+      <View style={styles.listCategory}>
+        <FlatListCategory />
+      </View>
+      <ListBlog />
+    </View>
   );
 }
-
-const Header = () => {
+const ItemCategory = ({item, onPress, color}) => {
   return (
-    <View style={header.containerHeader}>
-      <View style={header.containerText}>
-        <Text style={header.textHeader}>Gars</Text>
+    <TouchableOpacity onPress={onPress}>
+      <View style={category.item}>
+        <Text style={{...category.title, color}}>{item.categoryName}</Text>
       </View>
-      <TouchableOpacity style={header.containerIcon}>
-      <Image source={require('../../assets/images/iconNotification.png')} style={notification.notificationIcon} />
-      </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };
-
-const SearchBar = () => {
-  return (
-    <View style={search.searchBarContainer}>
-      <View style={search.searchBarIconContainer}>
-        <Image source={require('../../assets/images/iconSearch.png')} style={search.searchIcon} />
-      </View>
-      <TextInput
-        style={search.searchInput}
-        placeholder="Search"
-        placeholderTextColor="grey"
+// category popular man dll
+const FlatListCategory = () => {
+  const [selected, setSelected] = useState(1);
+  const renderItem = ({item}) => {
+    const color = item.id === selected ? colors.darkred() : colors.grey(0.4);
+    return (
+      <ItemCategory
+        item={item}
+        onPress={() => setSelected(item.id)}
+        color={color}
       />
-    </View>
-  );
-};
-
-const CategoryItem = ({ title }) => {
+    );
+  };
   return (
-    <View style={categoryItem.categoryItem}>
-      <Text style={categoryItem.categoryTitle}>{title}</Text>
-    </View>
+    <FlatList
+      data={CategoryList}
+      keyExtractor={item => item.id}
+      renderItem={item => renderItem({...item})}
+      ItemSeparatorComponent={() => <View style={{width: 20}} />}
+      contentContainerStyle={{paddingHorizontal: 24}}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    />
   );
 };
-
-// const ListBlog = () => {
-const blogData = [
-  {
-    id:1,
-    title: 'Jersey Merah Anak-Anak',
-    // description: '',
-    image: require('../../assets/images/janakmerah.png'),
-    price: "Rp. 299.000",
-  },
-  {
-    id:2,
-    title: 'Jersey Merah Dewasa',
-    // description: '',
-    image: require('../../assets/images/jdewasamerah.jpeg'),
-    price: "Rp. 399.000",
-  },
-  {
-    id:3,
-    title: 'Jersey Putih Anak-Anak',
-    // description: '',
-    image: require('../../assets/images/janakputih.png'),
-    price: "Rp. 299.000",
-  },
-  {
-    id:4,
-    title: 'Jersey Putih Dewasa',
-    // description: '',
-    image: require('../../assets/images/jdewasaputih.jpg'),
-    price: "Rp. 299.000",
-  },
-];
-
-//   return (
-//     <ScrollView contentContainerStyle={catalog.scrollContainer} showsVerticalScrollIndicator={false}>
-//       {blogData.map((item, index) => (
-//         <View key={index} style={catalog.cardContainer}>
-//           <Image source={item.image} style={catalog.cardImage} />
-//           <Text style={catalog.cardTitle}>{item.title}</Text>
-//           <Text style={catalog.cardDescription}>{item.description}</Text>
-
-//           {/* Harga dan Icon Add */}
-//           <View style={catalog.priceContainer}>
-//             <Text style={catalog.cardPrice}>{item.price}</Text>
-//             <TouchableOpacity style={catalog.iconAddContainer}>
-//               <Image source={require('./src/assets/images/iconAdd.png')} style={catalog.iconAddIcon} />
-//             </TouchableOpacity>
-//           </View>
-
-//           {/* Icon Like di pojok kanan atas */}
-//           <TouchableOpacity style={catalog.iconLikeContainer}>
-//             <Image source={require('./src/assets/images/iconLike.png')} style={catalog.iconLikeIcon} />
-//           </TouchableOpacity>
-//         </View>
-//       ))}
-//     </ScrollView>
-//   );
-// };
+const ListBlog = () => {
+  const horizontalData = BlogKids.slice(0, 5);
+  const verticalData = BlogKids.slice(5);
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.listBlog}>
+        <ListKids data={horizontalData} />
+        <View style={styles.listCard}>
+          {verticalData.map((item, index) => (
+            <ItemSmall item={item} key={index} />
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
 
 
 const styles = StyleSheet.create({
+  listCard: {
+    paddingHorizontal: 24,
+    paddingBottom: 10,
+    gap: 10,
+  },
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.white(),
   },
-});
-
-const header = StyleSheet.create({
-  containerHeader: {
+  header: {
+    paddingHorizontal: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', 
-    marginTop: 5,
-    padding: 10,
-    height: 90,
-  },
-  containerText: {
-    marginLeft: 20,
-  },
-  textHeader: {
-    fontFamily: fontType['Pjs-ExtraBold'],
-    fontSize: 32,
-    color: colors.red,
-  },
-  containerIcon: {
-    alignItems: 'flex-end',
-    marginRight: 20,
-  }
-});
-
-const search = StyleSheet.create({
-  searchBarContainer: {
-    top: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#D8D9DA',
-    borderRadius: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    paddingLeft: 35, // Adjust the padding for icon alignment
-  },
-  searchIconContainer: {
-    marginLeft: 20,
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: 'grey',
-    padding: 10,
-  },
-});
-
-const notification = StyleSheet.create({
-  notificationBarContainer: {
-    top: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#D8D9DA',
-    borderRadius: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    paddingLeft: 35, // Adjust the padding for icon alignment
-  },
-  notificationIconContainer: {
-    marginLeft: 20,
-  },
-  notificationIcon: {
-    width: 20,
-    height: 20,
-  },
-});
-
-const categoryItem = StyleSheet.create({
-  categoryList: {
-    flexDirection: 'row', 
-    marginTop: 0,
-    padding: 10,
-    maxHeight: 90,
-  },
-  categoryItem: {
-    padding: 10,
-    margin: 10,
-    paddingRight: -5,
-  },
-  categoryTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    fontFamily: fontType['CS-Book'],
-    color: 'grey',
-  },
-});
-
-const CardCatalog = StyleSheet.create({
-  scrollContainer: {
-    flexDirection: 'row',
-    padding: 20,
-  },
-  cardContainer: {
-    maxWidth: 300,
-    marginHorizontal: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    overflow: 'hidden',
-    elevation: 3,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    height: 52,
+    paddingTop: 8,
+    paddingBottom: 4,
     position: 'absolute',
-    top: 12,
-    right: 12,
-    zIndex: 1,
+    top: 0,
+    zIndex: 1000,
+    right: 0,
+    left: 0,
+    backgroundColor: colors.white(),
   },
-  cardBody: {
-    padding: 16,
+  bar: {
+    flexDirection: 'row',
+    padding: 10,
+    gap: 10,
+    alignItems: 'center',
+    backgroundColor: colors.grey(0.05),
+    borderRadius: 10,
+    flex: 1,
+  },
+  placeholder: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-Medium'],
+    color: colors.grey(0.5),
+    lineHeight: 18,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: colors.white(),
+  },
+  header: {
+    paddingHorizontal: 24,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    height:52,
+    elevation: 8,
+    paddingTop:8,
+    paddingBottom:4
+  },
+  title: {
+    fontSize: 25,
+    fontFamily: fontType['Pjs-ExtraBold'],
+    color: colors.red(0.8),
+  },
+  listCategory: {
+    paddingVertical: 10,
+  },
+  listBlog: {
+    paddingVertical: 15,
+    gap: 10,
+  },
+  listCard: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    gap: 15,
+  },
+});
+
+const category = StyleSheet.create({
+  item: {
+    paddingHorizontal: 37,
+    paddingVertical: 10,
+    borderRadius: 25,
+    alignItems: 'center',
+    backgroundColor: colors.grey(0.08),
+  },
+  title: {
+    fontFamily: fontType['Pjs-SemiBold'],
+    fontSize: 14,
+    lineHeight: 18,
+  },
+});
+
+const itemHorizontal = StyleSheet.create({
+  cardItem: {
+    width: 280,
+  },
+  cardImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+  },
+  cardInfo: {
+    justifyContent: 'flex-end',
+    height: '100%',
+    gap: 10,
+    maxWidth: '60%',
   },
   cardTitle: {
-    color: 'black', // Ganti dengan warna yang sesuai
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontFamily: fontType['Pjs-Bold'],
+    fontSize: 14,
+    color: colors.red(),
   },
-  cardPrice: {
-    color: 'black', // Ganti dengan warna yang sesuai
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  cardText: {
+    fontSize: 10,
+    color: colors.red(),
+    fontFamily: fontType['Pjs-Medium'],
   },
-  catalogImage: {
-    width: '100%', // Sesuaikan dengan kebutuhan
-    height: 150, // Sesuaikan dengan kebutuhan
-    resizeMode: 'cover',
-    borderRadius: 8,
-  },
-  iconLike: {
-    width: 20,
-    height: 20,
-    tintColor: 'white',
+  cardIcon: {
+    backgroundColor: colors.red(),
+    padding: 5,
+    borderColor: colors.white(),
+    borderWidth: 0.5,
+    borderRadius: 5,
   },
 });
-

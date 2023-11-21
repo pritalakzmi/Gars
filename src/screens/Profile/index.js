@@ -1,280 +1,134 @@
+import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Setting2} from 'iconsax-react-native';
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Image, ScrollView, TouchableOpacity, _View, SafeAreaView } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import {ProfileData, BlogList, BlogKids, BlogMan} from '../../../data';
+import {ItemSmall} from '../../components';
 import { fontType, colors } from '../../theme';
 
-export default function Profile() {
-    return (
-        <View style={styles.container}>
-            <ScrollView>
-                <View style={styles.profileContainer}>
-                    <Image source={require('../../assets/images/prita.jpg')} style={styleProfileImage.image} />
-                    <Text style={styles.text1}>pritalakzmi</Text>
-                </View>
-            <ButtonEdit />
-            <ButtonLike />
-            <ButtonPurchaseHistory />
-            <ButtonHelpReport/>
-            <ButtonSetUp/>
-            </ScrollView>
-        </View>
-    );
-}
+const formatNumber = number => {
+  if (number >= 1000000000) {
+    return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+  }
+  if (number >= 1000000) {
+    return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (number >= 1000) {
+    return (number / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  }
+  return number.toString();
+};
 
-const ButtonEdit = () => {
-    return (
-        <View style={buttonStyle.container} >
-            <View style={buttonStyle.buttonAdd}>
-                <TouchableOpacity
-                    style={buttonStyle.button}
-                    activeOpacity={0.5}
-                    onPress={() => { }}>
-                    <Text style={styles.text2}>Edit Profile</Text>
-                </TouchableOpacity>
+const data = BlogKids.slice(5);
+const Profile = () => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Setting2 color={colors.black()} variant="Linear" size={24} />
+      </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          gap: 10,
+          paddingVertical: 20,
+        }}>
+        <View style={{gap: 15, alignItems: 'center'}}>
+          <FastImage
+            style={profile.pic}
+            source={{
+              uri: ProfileData.profilePict,
+              headers: {Authorization: 'someAuthToken'},
+              priority: FastImage.priority.high,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+          <View style={{gap: 5, alignItems: 'center'}}>
+            <Text style={profile.name}>{ProfileData.name}</Text>
+            <Text style={profile.info}>
+              {ProfileData.username}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', gap: 20}}>
+            <View style={{alignItems: 'center', gap: 5}}>
+              <Text style={profile.sum}>{ProfileData.successfulpurchase}</Text>
+              <Text style={profile.tag}>Order Done</Text>
             </View>
+            <View style={{alignItems: 'center', gap: 5}}>
+              <Text style={profile.sum}>
+                {formatNumber(ProfileData.orderfailed)}
+              </Text>
+              <Text style={profile.tag}>Order Failed</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={profile.buttonEdit}>
+            <Text style={profile.buttonText}>Edit Profile</Text>
+          </TouchableOpacity>
         </View>
-    );
-}
-
-const ButtonLike = () => {
-    return (
-        <View style={buttonLikeStyle.container}>
-            <TouchableOpacity
-                style={buttonLikeStyle.button}
-                activeOpacity={0.5}
-                onPress={() => { }}>
-                <Image source={require('../../assets/images/iconLikeFilled.png')} style={buttonLikeStyle.icon} />
-                <Text style={styles.text3}>My Favorite</Text>
-            </TouchableOpacity>
+        <View style={{paddingVertical: 10, gap:10}}>
+          {data.map((item, index) => (
+            <ItemSmall item={item} key={index} />
+          ))}
         </View>
-    );
-}
+      </ScrollView>
+    </View>
+  );
+};
 
-const ButtonPurchaseHistory = () => {
-    return (
-        <View style={buttonPurchaseHistoryStyle.container}>
-            <TouchableOpacity
-                style={buttonPurchaseHistoryStyle.button}
-                activeOpacity={0.5}
-                onPress={() => { }}>
-                <Text style={styles.text4}>Purchase History</Text>
-                <Image source={require('../../assets/images/purchaseHistory.png')} style={buttonPurchaseHistoryStyle.icon} />
-            </TouchableOpacity>
-        </View>
-    );
-}
-
-const ButtonHelpReport = () => {
-    return (
-        <View style={buttonHelpReport.container}>
-            <TouchableOpacity
-                style={buttonHelpReport.button}
-                activeOpacity={0.5}
-                onPress={() => { }}>
-                <Text style={styles.text5}>Help & Report</Text>
-                <Image source={require('../../assets/images/report.png')} style={buttonHelpReport.icon} />
-            </TouchableOpacity>
-        </View>
-    );
-}
-
-const ButtonSetUp = () => {
-    return (
-        <View style={buttonSetUp.container}>
-            <TouchableOpacity
-                style={buttonSetUp.button}
-                activeOpacity={0.5}
-                onPress={() => { }}>
-                <Text style={styles.text6}>Set Up Account</Text>
-                <Image source={require('../../assets/images/user.png')} style={buttonSetUp.icon} />
-            </TouchableOpacity>
-        </View>
-    );
-}
-
-const styleProfileImage = StyleSheet.create({
-    image: {
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-        marginBottom: 20,
-        alignSelf: 'center',
-        marginTop: 40,
-    },
-});
-
-const buttonStyle = StyleSheet.create({
-    container: {
-        alignItems: 'center',
-    },
-    buttonAdd: {
-        // paddingTop: 90,
-        textAlign: 'center',
-    },
-    button: {
-        textAlign: 'center',
-        width: 120,
-        height: 40,
-        padding: 6,
-        marginBottom: 10,
-        backgroundColor: 'grey',
-        backgroundColor: 15,
-        borderRadius: 10,
-    },
-});
-
-const buttonLikeStyle = StyleSheet.create({
-    container: {
-        alignItems: 'left',
-    },
-    button: {
-        textAlign: 'center',
-        width: 380,
-        height: 50,
-        padding: 6,
-        marginTop: 10,
-        marginLeft: 17,
-        backgroundColor: '#FAF0E6',
-        backgroundColor: 10,
-        borderRadius: 10,
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        marginBottom: 10,
-        alignSelf: 'left',
-        marginTop: 5,
-        marginLeft: 15,
-    },
-});
-
-const buttonPurchaseHistoryStyle = StyleSheet.create({
-    container: {
-        alignItems: 'left',
-    },
-    button: {
-        textAlign: 'center',
-        width: 380,
-        height: 50,
-        padding: 6,
-        marginTop: 10,
-        marginLeft: 17,
-        backgroundColor: '#FAF0E6',
-        backgroundColor: 10,
-        borderRadius: 10,
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        marginBottom: 20,
-        alignSelf: 'left',
-        marginTop: -22,
-        marginLeft: 15,
-    },
-});
-
-const buttonHelpReport = StyleSheet.create({
-    container: {
-        alignItems: 'left',
-    },
-    button: {
-        textAlign: 'center',
-        width: 380,
-        height: 50,
-        padding: 6,
-        marginTop: 10,
-        marginLeft: 17,
-        backgroundColor: '#FAF0E6',
-        backgroundColor: 10,
-        borderRadius: 10,
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        marginBottom: 20,
-        alignSelf: 'left',
-        marginTop: -22,
-        marginLeft: 15,
-    },
-});
-
-const buttonSetUp = StyleSheet.create({
-    container: {
-        alignItems: 'left',
-    },
-    button: {
-        textAlign: 'center',
-        width: 380,
-        height: 50,
-        padding: 6,
-        marginTop: 10,
-        marginLeft: 17,
-        backgroundColor: '#FAF0E6',
-        backgroundColor: 10,
-        borderRadius: 10,
-        marginBottom: 320,
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        marginBottom: 20,
-        alignSelf: 'left',
-        marginTop: -22,
-        marginLeft: 15,
-    },
-});
-
+export default Profile;
 const styles = StyleSheet.create({
-    text1: {
-        fontSize: 15,
-        color: 'black',
-        padding: 20,
-        paddingLeft: 30,
-        marginTop: -30,
-        fontFamily: fontType['Pjs-ExtraBold'],
-        textAlign: 'center'
-    },
-    text2: {
-        fontSize: 13,
-        color: 'black',
-        paddingTop: 4,
-        fontFamily: fontType['Pjs-ExtraBold'],
-        textAlign: 'center',
-    },
-    text3: {
-        fontSize: 15,
-        color: 'black',
-        marginTop: -36,
-        fontFamily: fontType['Pjs-Medium'],
-        marginLeft: 70,
-        textAlign: 'left',
-    },
-    text4: {
-        fontSize: 15,
-        color: 'black',
-        marginTop: 6,
-        fontFamily: fontType['Pjs-Medium'],
-        marginLeft: 70,
-        textAlign: 'left',
-    },
-    text5: {
-        fontSize: 15,
-        color: 'black',
-        marginTop: 6,
-        fontFamily: fontType['Pjs-Medium'],
-        marginLeft: 70,
-        textAlign: 'left',
-    },
-    text6: {
-        fontSize: 15,
-        color: 'black',
-        marginTop: 6,
-        fontFamily: fontType['Pjs-Medium'],
-        marginLeft: 70,
-        textAlign: 'left',
-    },
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: colors.white(),
+  },
+  header: {
+    paddingHorizontal: 24,
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 52,
+    elevation: 8,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: fontType['Pjs-ExtraBold'],
+    color: colors.black(),
+  },
 });
-
+const profile = StyleSheet.create({
+  pic: {width: 120, height: 120, borderRadius: 60},
+  name: {
+    color: colors.black(),
+    fontSize: 20,
+    fontFamily: fontType['Pjs-Bold'],
+    textTransform:'capitalize'
+  },
+  info: {
+    fontSize: 12,
+    fontFamily: fontType['Pjs-Regular'],
+    color: colors.grey(),
+  },
+  sum: {
+    fontSize: 16,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: colors.black(),
+  },
+  tag: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-Regular'],
+    color: colors.grey(0.5),
+  },
+  buttonEdit: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: colors.grey(0.1),
+    borderRadius: 30,
+  },
+  buttonText: {
+    fontSize: 14,
+    fontFamily: fontType['Pjs-SemiBold'],
+    color: colors.black(),
+  },
+});
