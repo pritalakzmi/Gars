@@ -1,8 +1,8 @@
 import React from 'react';
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Home, BlogOrder, Profile, BlogDetail} from '../screens';
-import {DiscountCircle, Home2, ProfileCircle, TruckFast} from 'iconsax-react-native'; 
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Home, Discover, Profile, Search, AddBlogForm, EditBlogForm, BlogPost } from '../screens';
+import { Home2, ProfileCircle, TruckFast } from 'iconsax-react-native';
 import { fontType, colors } from '../theme';
 
 const Tab = createBottomTabNavigator();
@@ -30,7 +30,7 @@ function MainApp() {
         component={Home}
         options={{
           tabBarLabel: 'Home',
-          tabBarIcon: ({focused, color}) => (
+          tabBarIcon: ({ focused, color }) => (
             <Home2
               color={color}
               variant={focused ? 'Bold' : 'Linear'}
@@ -42,10 +42,10 @@ function MainApp() {
       />
       <Tab.Screen
         name="My Order"
-        component={BlogOrder}
+        component={Discover}
         options={{
           tabBarLabel: 'My Order',
-          tabBarIcon: ({focused, color}) => (
+          tabBarIcon: ({ focused, color }) => (
             <TruckFast
               color={color}
               variant={focused ? 'Bold' : 'Linear'}
@@ -55,27 +55,12 @@ function MainApp() {
           headerShown: false,
         }}
       />
-      {/* <Tab.Screen
-        name="Promo"
-        component={Promo}
-        options={{
-          tabBarLabel: 'Promo',
-          tabBarIcon: ({focused, color}) => (
-            <DiscountCircle
-              color={color}
-              variant={focused ? 'Bold' : 'Linear'}
-              size={24}
-            />
-          ),
-          headerShown: false,
-        }}
-      /> */}
       <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({focused, color}) => (
+          tabBarIcon: ({ focused, color }) => (
             <ProfileCircle
               color={color}
               variant={focused ? 'Bold' : 'Linear'}
@@ -94,17 +79,49 @@ const Router = () => {
       <Stack.Screen
         name="MainApp"
         component={MainApp}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="BlogDetail"
-        component={BlogDetail}
+        name="BlogPost"
+        component={BlogPost}
         options={{
-          headerShown: false, 
+          headerShown: false,
           animationEnabled: true,
           animationTypeForReplace: 'pop',
           gestureEnabled: true,
-          gestureDirection : 'horizontal',
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="SearchPage"
+        component={Search}
+        options={{
+          headerShown: false,
+          presentation: 'transparentModal',
+        }}
+      />
+      <Stack.Screen
+        name="AddBlog"
+        component={AddBlogForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
+        name="EditBlog"
+        component={EditBlogForm}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
           ...TransitionPresets.SlideFromRightIOS,
         }}
       />

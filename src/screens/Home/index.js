@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, FlatList, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import {Element3, SearchNormal1, ShoppingCart} from 'iconsax-react-native';
 import {BlogKids, BlogMan, CategoryList} from '../../../data';
 import { fontType, colors } from '../../theme';
 import { ListKids, ListMan} from '../../components';
+import { useNavigation } from "@react-navigation/native";
 
 export default function Home() {
+  const navigation = useNavigation();
   return (
+    <TouchableWithoutFeedback onPress={() => navigation.navigate("SearchPage")}>
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Gars</Text>
@@ -23,6 +26,7 @@ export default function Home() {
       </View>
       <ListBlog />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 const ItemCategory = ({item, onPress, color}) => {
@@ -75,7 +79,6 @@ const ListBlog = () => {
     </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   listCard: {
@@ -164,41 +167,41 @@ const category = StyleSheet.create({
   },
 });
 
-const itemHorizontal = StyleSheet.create({
-  cardItem: {
-    width: 280,
-  },
-  cardImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 5,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 15,
-  },
-  cardInfo: {
-    justifyContent: 'flex-end',
-    height: '100%',
-    gap: 10,
-    maxWidth: '60%',
-  },
-  cardTitle: {
-    fontFamily: fontType['Pjs-Bold'],
-    fontSize: 14,
-    color: colors.red(),
-  },
-  cardText: {
-    fontSize: 10,
-    color: colors.red(),
-    fontFamily: fontType['Pjs-Medium'],
-  },
-  cardIcon: {
-    backgroundColor: colors.red(),
-    padding: 5,
-    borderColor: colors.white(),
-    borderWidth: 0.5,
-    borderRadius: 5,
-  },
-});
+// const itemHorizontal = StyleSheet.create({
+//   cardItem: {
+//     width: 280,
+//   },
+//   cardImage: {
+//     width: '100%',
+//     height: 200,
+//     borderRadius: 5,
+//   },
+//   cardContent: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     padding: 15,
+//   },
+//   cardInfo: {
+//     justifyContent: 'flex-end',
+//     height: '100%',
+//     gap: 10,
+//     maxWidth: '60%',
+//   },
+//   cardTitle: {
+//     fontFamily: fontType['Pjs-Bold'],
+//     fontSize: 14,
+//     color: colors.red(),
+//   },
+//   cardText: {
+//     fontSize: 10,
+//     color: colors.red(),
+//     fontFamily: fontType['Pjs-Medium'],
+//   },
+//   cardIcon: {
+//     backgroundColor: colors.red(),
+//     padding: 5,
+//     borderColor: colors.white(),
+//     borderWidth: 0.5,
+//     borderRadius: 5,
+//   },
+// });

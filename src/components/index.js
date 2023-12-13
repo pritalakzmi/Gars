@@ -1,5 +1,5 @@
-import ListBlog from "./ListKids";
 import ListKids from "./ListKids";
 import ItemBookmark from "./ItemBookmark";
-
-export {ListBlog, ListKids, ItemBookmark}
+import SearchBar from "./SearchBar";
+import ItemPost from "./ItemPost";
+export {ListKids, ItemBookmark, SearchBar, ItemPost}

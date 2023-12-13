@@ -1,26 +1,59 @@
-import {ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {Setting2} from 'iconsax-react-native';
-import React from 'react';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { Edit, Setting2 } from 'iconsax-react-native';
+import React, { useState, useCallback } from 'react';
 import FastImage from 'react-native-fast-image';
-import {ProfileData, BlogList, BlogKids, BlogMan} from '../../../data';
-import {ItemSmall} from '../../components';
+import { ProfileData } from '../../../data';
+import { ItemPost } from '../../components';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { fontType, colors } from '../../theme';
+import { formatNumber } from '../../utils/formatNumber';
+import axios from 'axios';
 
-const formatNumber = number => {
-  if (number >= 1000000000) {
-    return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
-  }
-  if (number >= 1000000) {
-    return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-  }
-  if (number >= 1000) {
-    return (number / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-  }
-  return number.toString();
-};
+// const formatNumber = number => {
+//   if (number >= 1000000000) {
+//     return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+//   }
+//   if (number >= 1000000) {
+//     return (number / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+//   }
+//   if (number >= 1000) {
+//     return (number / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+//   }
+//   return number.toString();
+// };
 
-const data = BlogKids.slice(5);
+// const data = BlogKids.slice(5);
 const Profile = () => {
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [blogData, setBlogData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const getDataBlog = async () => {
+    try {
+      const response = await axios.get(
+        'https://6572a1e0d61ba6fcc015471c.mockapi.io/gars/post',
+      );
+      setBlogData(response.data.reverse());
+      setLoading(false)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getDataBlog()
+      setRefreshing(false);
+    }, 1500);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getDataBlog();
+    }, [])
+  );
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -33,28 +66,28 @@ const Profile = () => {
           gap: 10,
           paddingVertical: 20,
         }}>
-        <View style={{gap: 15, alignItems: 'center'}}>
+        <View style={{ gap: 15, alignItems: 'center' }}>
           <FastImage
             style={profile.pic}
             source={{
               uri: ProfileData.profilePict,
-              headers: {Authorization: 'someAuthToken'},
+              headers: { Authorization: 'someAuthToken' },
               priority: FastImage.priority.high,
             }}
             resizeMode={FastImage.resizeMode.cover}
           />
-          <View style={{gap: 5, alignItems: 'center'}}>
+          <View style={{ gap: 5, alignItems: 'center' }}>
             <Text style={profile.name}>{ProfileData.name}</Text>
             <Text style={profile.info}>
               {ProfileData.username}
             </Text>
           </View>
-          <View style={{flexDirection: 'row', gap: 20}}>
-            <View style={{alignItems: 'center', gap: 5}}>
+          <View style={{ flexDirection: 'row', gap: 20 }}>
+            <View style={{ alignItems: 'center', gap: 5 }}>
               <Text style={profile.sum}>{ProfileData.successfulpurchase}</Text>
               <Text style={profile.tag}>Order Done</Text>
             </View>
-            <View style={{alignItems: 'center', gap: 5}}>
+            <View style={{ alignItems: 'center', gap: 5 }}>
               <Text style={profile.sum}>
                 {formatNumber(ProfileData.orderfailed)}
               </Text>
@@ -65,21 +98,33 @@ const Profile = () => {
             <Text style={profile.buttonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
-        <View style={{paddingVertical: 10, gap:10}}>
-          {data.map((item, index) => (
-            <ItemSmall item={item} key={index} />
-          ))}
+        <View style={{ paddingVertical: 10, gap: 10 }}>
+          {loading ? (
+            <ActivityIndicator size={'large'} color={colors.blue()} />
+          ) : (
+            blogData.map((item, index) => <ItemPost item={item} key={index} />)
+          )}
         </View>
       </ScrollView>
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate("AddBlog")}>
+        <Edit color={colors.white()} variant="Linear" size={20} />
+      </TouchableOpacity>
     </View>
   );
 };
 
 export default Profile;
 const styles = StyleSheet.create({
-  container: {
+ container: {
     flex: 1,
     backgroundColor: colors.white(),
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   header: {
     paddingHorizontal: 24,
@@ -96,14 +141,30 @@ const styles = StyleSheet.create({
     fontFamily: fontType['Pjs-ExtraBold'],
     color: colors.black(),
   },
+  floatingButton: {
+    backgroundColor: colors.red(0.6),
+    padding: 15,
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    borderRadius: 10,
+    shadowColor: colors.red(0.8),
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
 });
 const profile = StyleSheet.create({
-  pic: {width: 120, height: 120, borderRadius: 60},
+  pic: { width: 120, height: 120, borderRadius: 60 },
   name: {
     color: colors.black(),
     fontSize: 20,
     fontFamily: fontType['Pjs-Bold'],
-    textTransform:'capitalize'
+    textTransform: 'capitalize'
   },
   info: {
     fontSize: 12,

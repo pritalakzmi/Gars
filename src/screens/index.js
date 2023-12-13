@@ -1,5 +1,9 @@
 import Home from "./Home";
-import Profile from "./Profile";
 import BlogDetail from "./BlogDetail";
-import BlogOrder from "./BlogOrder";
-export {Home, Profile, BlogDetail, BlogOrder}
+import Discover from "./Discover";
+import Profile from "./Profile";
+import Search from "./Search";
+import AddBlogForm from "./AddBlogForm";
+import EditBlogForm from "./EditBlogForm";
+import BlogPost from "./BlogPost";
+export {Home, BlogDetail, Discover, Profile, Search, AddBlogForm, EditBlogForm, BlogPost}

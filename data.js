@@ -12,6 +12,16 @@ export const CategoryList = [
       categoryName: 'Kids',
     },
   ];
+  export const ScaleList = [
+    {
+      id: 1,
+      categoryName: 'Satisfying',
+    },
+    {
+      id: 2,
+      categoryName: 'Disappointing',
+    },
+  ];
   export const BlogKids = [
     {
       id: 1,
@@ -20,9 +30,7 @@ export const CategoryList = [
       image:
         'https://thumbor.sirclocdn.com/unsafe/1920x/filters:quality(100):format(webp)/https://storage.googleapis.com/sirclo-prod-storefront/products/a68a36c2-8705-416b-966d-46752309681d-timnas-boys-2023-2-02.jpg',
       price: '               IDR 399.000,00',
-      totalComments: 430,
-      totalLikes:2300,
-      content: `
+      description: `
       Dengan bahan yang didesain :
       
       SUN PROTECTION untuk Melindungi dari sinar UV matahari
@@ -48,7 +56,7 @@ export const CategoryList = [
       price: '               IDR 399.000,00',
       totalComments: 430,
       totalLikes:2300,
-      content: `
+      description: `
       Dengan bahan yang didesain :
       
       SUN PROTECTION untuk Melindungi dari sinar UV matahari
@@ -76,7 +84,7 @@ export const CategoryList = [
       price: 'IDR 399.000,00',
       totalComments: 430,
       totalLikes:2300,
-      content: `
+      description: `
       Dengan bahan yang didesain :
       
       SUN PROTECTION untuk Melindungi dari sinar UV matahari
@@ -102,7 +110,7 @@ export const CategoryList = [
       price: 'IDR 399,000',
       totalComments: 430,
       totalLikes:2300,
-      content: `
+      description: `
       Dengan bahan yang didesain :
       
       SUN PROTECTION untuk Melindungi dari sinar UV matahari
@@ -127,7 +135,7 @@ export const CategoryList = [
       image:
         'https://thumbor.sirclocdn.com/unsafe/1920x/filters:quality(90):format(webp)/https://storage.googleapis.com/sirclo-prod-storefront/banners/410425ab-0260-4922-9a2b-63de3c84f291-Web%20TIMNAS%20JERSEY-100.jpg',
       price : 'Coming Soon',
-      content: `
+      description: `
       Dengan bahan yang didesain :
       COMING SOON 
 
@@ -148,7 +156,7 @@ export const CategoryList = [
         'https://thumbor.sirclocdn.com/unsafe/2560x/filters:quality(90):format(webp)/https://storage.googleapis.com/sirclo-prod-storefront/banners/d99957ee-cf87-4755-a33e-d038fddd19a7-BANNER-WEB-MEMBER.jpg',
       price: 'RP. 939.000',
       totalshop: 90,
-      content: `
+      description: `
       `,
     },
     {
@@ -158,7 +166,7 @@ export const CategoryList = [
         'https://document-export.canva.com/n1kiQ/DAFzu6n1kiQ/1/thumbnail/0001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUHWDTJW6UD%2F20231119%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231119T060705Z&X-Amz-Expires=32211&X-Amz-Signature=c025381d23f6a34d2fa981fdbb582445d9f8c37a3eecf81b882a27c654edd122&X-Amz-SignedHeaders=host&response-expires=Sun%2C%2019%20Nov%202023%2015%3A03%3A56%20GMT',
       price: 'RP. 939.000',
       totalshop: 90,
-      content: `
+      description: `
       `,
     },
   ];
@@ -169,7 +177,7 @@ export const CategoryList = [
       image:
         'https://thumbor.sirclocdn.com/unsafe/1920x/filters:quality(90):format(webp)/https://storage.googleapis.com/sirclo-prod-storefront/banners/410425ab-0260-4922-9a2b-63de3c84f291-Web%20TIMNAS%20JERSEY-100.jpg',
       price : 'Coming Soon',
-      content: `
+      description: `
       Dengan bahan yang didesain :
       COMING SOON 
 
@@ -190,7 +198,7 @@ export const CategoryList = [
         'https://thumbor.sirclocdn.com/unsafe/2560x/filters:quality(90):format(webp)/https://storage.googleapis.com/sirclo-prod-storefront/banners/d99957ee-cf87-4755-a33e-d038fddd19a7-BANNER-WEB-MEMBER.jpg',
       price: 'RP. 939.000',
       totalshop: 90,
-      content: `
+      description: `
       `,
     },
     {
@@ -200,7 +208,7 @@ export const CategoryList = [
         'https://document-export.canva.com/n1kiQ/DAFzu6n1kiQ/1/thumbnail/0001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUHWDTJW6UD%2F20231119%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231119T060705Z&X-Amz-Expires=32211&X-Amz-Signature=c025381d23f6a34d2fa981fdbb582445d9f8c37a3eecf81b882a27c654edd122&X-Amz-SignedHeaders=host&response-expires=Sun%2C%2019%20Nov%202023%2015%3A03%3A56%20GMT',
       price: 'RP. 939.000',
       totalshop: 90,
-      content: `
+      description: `
       `,
     },
   ];
@@ -212,5 +220,14 @@ export const CategoryList = [
     successfulpurchase: 7,
     orderfailed: 0,
   };
+
+  export const BlogData = [
+    {
+      id: 1,
+      username: '@pritaakzmi',
+      image: '',
+      caption: '',
+    },
+  ];
 
   

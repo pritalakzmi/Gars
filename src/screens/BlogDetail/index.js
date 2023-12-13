@@ -99,7 +99,7 @@ const BlogDetail = ({ route }) => {
           <Text style={styles.price}>{selectedBlog.price}</Text>
         </View>
         <Text style={styles.title}>{selectedBlog.title}</Text>
-        <Text style={styles.content}>{selectedBlog.content}</Text>
+        <Text style={styles.description}>{selectedBlog.description}</Text>
       </Animated.ScrollView>
       <Animated.View style={[styles.bottomBar, { transform: [{ translateY: bottomBarY }] }]}>
         <View style={{ flexDirection: 'right', gap: 5, alignItems: 'center' }}>
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     color: colors.black(),
     marginTop: 10,
   },
-  content: {
+  description: {
     color: colors.black(),
     fontFamily: fontType['Pjs-Medium'],
     fontSize: 10,

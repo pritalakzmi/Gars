@@ -66,6 +66,7 @@ const ListKids = ({data}) => {
   );
 };
 export default ListKids;
+
 const itemHorizontal = StyleSheet.create({
   cardItem: {
     width: 300,
