@@ -1,171 +1,238 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { ArrowLeft } from 'iconsax-react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { ArrowLeft, Like1, Share, More } from 'iconsax-react-native';
 import { useNavigation } from '@react-navigation/native';
+import FastImage from 'react-native-fast-image';
 import { fontType, colors } from '../../theme';
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import { formatNumber } from '../../utils/formatNumber';
+import ActionSheet from 'react-native-actions-sheet';
 
-const EditBlogForm = ({ route }) => {
+const BlogPost = ({ route }) => {
   const { blogId } = route.params;
-  const dataCategory = [
-    { id: 1, name: 'Satisfying' },
-    { id: 2, name: 'Disappointing' },
-  ];
-  const [blogData, setBlogData] = useState({
-    username: '',
-    category: {},
-    caption: '',
-  });
-  const handleChange = (key, value) => {
-    setBlogData({
-      ...blogData,
-      [key]: value,
-    });
-  };
-  const [image, setImage] = useState(null);
   const navigation = useNavigation();
+  const [iconStates, setIconStates] = useState({
+    liked: { variant: 'Linear', color: colors.grey(0.6) },
+    bookmarked: { variant: 'Linear', color: colors.grey(0.6) },
+  });
   const [loading, setLoading] = useState(true);
+  const [selectedBlog, setSelectedBlog] = useState(null);
+  const actionSheetRef = useRef(null);
+  const openActionSheet = () => {
+    actionSheetRef.current?.show();
+  };
+  const closeActionSheet = () => {
+    actionSheetRef.current?.hide();
+  };
   useEffect(() => {
-    getBlogById();
+    const subscriber = firestore()
+      .collection('blog')
+      .doc(blogId)
+      .onSnapshot(documentSnapshot => {
+        const blogData = documentSnapshot.data();
+        if (blogData) {
+          console.log('Blog data: ', blogData);
+          setSelectedBlog(blogData);
+        } else {
+          console.log(`Blog with ID ${blogId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
   }, [blogId]);
-
-  const getBlogById = async () => {
+  const navigateEdit = () => {
+    closeActionSheet();
+    navigation.navigate('EditBlog', { blogId });
+  };
+  const handleDelete = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        `https://6572a1e0d61ba6fcc015471c.mockapi.io/gars/post//${blogId}`,
-      );
-      setBlogData({
-        username: response.data.username,
-        category: {
-          id: response.data.category.id,
-          name: response.data.category.name
-        },
-        caption: response.data.caption,
-      })
-      setImage(response.data.image)
-      setLoading(false);
+      await firestore()
+        .collection('blog')
+        .doc(blogId)
+        .delete()
+        .then(() => {
+          console.log('Blog deleted!');
+        });
+      if (selectedBlog?.image) {
+        const imageRef = storage().refFromURL(selectedBlog?.image);
+        await imageRef.delete();
+      }
+      console.log('Blog deleted!');
+      closeActionSheet();
+      setSelectedBlog(null);
+      setLoading(false)
+      navigation.navigate('Profile');
     } catch (error) {
       console.error(error);
     }
   };
-  const handleUpdate = async () => {
-    setLoading(true);
-    try {
-      await axios
-        .put(`https://6572a1e0d61ba6fcc015471c.mockapi.io/gars/post/${blogId}`, {
-          username: blogData.username,
-          category: blogData.category,
-          image,
-          caption: blogData.caption,
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      setLoading(false);
-      navigation.navigate('Profile');
-    } catch (e) {
-      console.log(e);
-    }
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const diffClampY = Animated.diffClamp(scrollY, 0, 52);
+  const headerY = diffClampY.interpolate({
+    inputRange: [0, 52],
+    outputRange: [0, -52],
+  });
+  const bottomBarY = diffClampY.interpolate({
+    inputRange: [0, 52],
+    outputRange: [0, 52],
+  });
+
+  const toggleIcon = iconName => {
+    setIconStates(prevStates => ({
+      ...prevStates,
+      [iconName]: {
+        variant: prevStates[iconName].variant === 'Linear' ? 'Bold' : 'Linear',
+        color:
+          prevStates[iconName].variant === 'Linear'
+            ? colors.red(0.5)
+            : colors.grey(0.6),
+      },
+    }));
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View
+        style={[styles.header, { transform: [{ translateY: headerY }] }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft color={colors.black()} variant="Linear" size={24} />
+          <ArrowLeft color={colors.grey(0.6)} variant="Linear" size={24} />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.title}>Share Your Experience</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 20 }}>
+          <Share color={colors.grey(0.6)} variant="Linear" size={24} />
+          <TouchableOpacity onPress={openActionSheet}>
+            <More
+              color={colors.grey(0.6)}
+              variant="Linear"
+              style={{ transform: [{ rotate: '90deg' }] }}
+            />
+          </TouchableOpacity>
         </View>
-      </View>
-      <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: 24,
-          paddingVertical: 10,
-          gap: 10,
-        }}>
-        <View style={textInput.borderDashed}>
-          <TextInput
-            placeholder="Username"
-            value={blogData.username}
-            onChangeText={text => handleChange('username', text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={textInput.username}
-          />
+      </Animated.View>
+      {loading ? (
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <ActivityIndicator size={'large'} color={colors.red()} />
         </View>
-        <View style={[textInput.borderDashed]}>
-          <TextInput
-            placeholder="Image"
-            value={image}
-            onChangeText={text => setImage(text)}
-            placeholderTextColor={colors.grey(0.6)}
-            style={textInput.content}
-          />
+      ) : (
+        <Animated.ScrollView
+          showsVerticalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true },
+          )}
+          contentContainerStyle={{
+            paddingHorizontal: 24,
+            paddingTop: 62,
+            paddingBottom: 54,
+          }}>
+          <FastImage
+            style={styles.image}
+            source={{
+              uri: selectedBlog?.image,
+              headers: { Authorization: 'someAuthToken' },
+              priority: FastImage.priority.high,
+            }}
+            resizeMode={FastImage.resizeMode.cover}></FastImage>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: 15,
+            }}>
+            <Text style={styles.category}>{selectedBlog?.category.name}</Text>
+            {/* <Text style={styles.date}>
+              {formatDate(selectedBlog?.createdAt)}
+            </Text> */}
+          </View>
+          <Text style={styles.username}>{selectedBlog?.username}</Text>
+          <Text style={styles.caption}>{selectedBlog?.caption}</Text>
+        </Animated.ScrollView>
+      )}
+      <Animated.View
+        style={[styles.bottomBar, { transform: [{ translateY: bottomBarY }] }]}>
+        <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => toggleIcon('liked')}>
+            <Like1
+              color={iconStates.liked.color}
+              variant={iconStates.liked.variant}
+              size={24}
+            />
+          </TouchableOpacity>
+          <Text style={styles.info}>
+            {formatNumber(selectedBlog?.totalLikes)}
+          </Text>
         </View>
-        <View style={[textInput.borderDashed]}>
+        <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+        </View>
+        <TouchableOpacity onPress={() => toggleIcon('bookmarked')}>
+        </TouchableOpacity>
+      </Animated.View>
+      <ActionSheet
+        ref={actionSheetRef}
+        containerStyle={{
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+        }}
+        indicatorStyle={{
+          width: 100,
+        }}
+        gestureEnabled={true}
+        defaultOverlayOpacity={0.3}>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={navigateEdit}>
           <Text
             style={{
-              fontSize: 12,
-              fontFamily: fontType['Pjs-Regular'],
-              color: colors.grey(0.6),
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
+              fontSize: 18,
             }}>
-            Category
+            Edit
           </Text>
-          <View style={category.container}>
-            {dataCategory.map((item, index) => {
-              const bgColor =
-                item.id === blogData.category.id
-                ? colors.red(0.5)
-                : colors.red(0.12);
-              const color =
-                item.id === blogData.category.id
-                  ? colors.white()
-                  : colors.grey();
-              return (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() =>
-                    handleChange('category', { id: item.id, name: item.name })
-                  }
-                  style={[category.item, { backgroundColor: bgColor }]}>
-                  <Text style={[category.name, { color: color }]}>
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-        <View style={[textInput.borderDashed, { minHeight: 250 }]}>
-          <TextInput
-            placeholder="Caption"
-            value={blogData.caption}
-            onChangeText={text => handleChange('caption', text)}
-            placeholderTextColor={colors.grey(0.6)}
-            multiline
-            style={textInput.caption}
-          />
-        </View>
-      </ScrollView>
-      <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.button} onPress={handleUpdate}>
-          <Text style={styles.buttonLabel}>Update</Text>
         </TouchableOpacity>
-      </View>
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={colors.blue()} />
-        </View>
-      )}
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={handleDelete}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: colors.black(),
+              fontSize: 18,
+            }}>
+            Delete
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 15,
+          }}
+          onPress={closeActionSheet}>
+          <Text
+            style={{
+              fontFamily: fontType['Pjs-Medium'],
+              color: 'red',
+              fontSize: 18,
+            }}>
+            Cancel
+          </Text>
+        </TouchableOpacity>
+      </ActionSheet>
     </View>
   );
 };
 
-export default EditBlogForm;
+export default BlogPost;
 
 const styles = StyleSheet.create({
   container: {
@@ -174,97 +241,62 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 24,
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     height: 52,
-    elevation: 8,
     paddingTop: 8,
     paddingBottom: 4,
-  },
-  title: {
-    fontFamily: fontType['Pjs-Bold'],
-    fontSize: 16,
-    color: colors.black(),
+    position: 'absolute',
+    zIndex: 1000,
+    top: 0,
+    right: 0,
+    left: 0,
+    backgroundColor: colors.white(),
   },
   bottomBar: {
-    backgroundColor: colors.white(),
-    alignItems: 'flex-end',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    shadowColor: colors.black(),
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-  },
-  button: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: colors.red(),
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonLabel: {
-    fontSize: 14,
-    fontFamily: fontType['Pjs-SemiBold'],
-    color: colors.white(),
-  },
-  loadingOverlay: {
     position: 'absolute',
-    top: 0,
+    zIndex: 1000,
+    backgroundColor: colors.white(),
+    paddingVertical: 14,
+    paddingHorizontal: 60,
+    bottom: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    backgroundColor: colors.black(0.4),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
-const textInput = StyleSheet.create({
-  borderDashed: {
-    borderStyle: 'dashed',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    borderColor: colors.grey(0.4),
-  },
-  username: {
-    fontSize: 16,
-    fontFamily: fontType['Pjs-SemiBold'],
-    color: colors.black(),
-    padding: 0,
-  },
-  caption: {
-    fontSize: 12,
-    fontFamily: fontType['Pjs-Regular'],
-    color: colors.black(),
-    padding: 0,
-  },
-});
-const category = StyleSheet.create({
-  title: {
-    fontSize: 12,
-    fontFamily: fontType['Pjs-Regular'],
-    color: colors.grey(0.6),
-  },
-  container: {
-    flexWrap: 'wrap',
     flexDirection: 'row',
-    gap: 10,
+    justifyContent: 'space-between',
+  },
+  image: {
+    height: 360,
+    width: 'auto',
+    borderRadius: 15,
+  },
+  info: {
+    color: colors.grey(0.6),
+    fontFamily: fontType['Pjs-SemiBold'],
+    fontSize: 12,
+  },
+  category: {
+    color: colors.red(),
+    fontFamily: fontType['Pjs-SemiBold'],
+    fontSize: 12,
+  },
+  date: {
+    color: colors.grey(0.6),
+    fontFamily: fontType['Pjs-Medium'],
+    fontSize: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontFamily: fontType['Pjs-Bold'],
+    color: colors.black(),
     marginTop: 10,
   },
-  item: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 25,
-  },
-  name: {
-    fontSize: 10,
+  caption: {
+    color: colors.grey(),
     fontFamily: fontType['Pjs-Medium'],
+    fontSize: 10,
+    lineHeight: 20,
+    marginTop: 15,
   },
 });

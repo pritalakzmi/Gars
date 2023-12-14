@@ -13,7 +13,9 @@ export default function Home() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Gars</Text>
-        <ShoppingCart color={colors.darkred()} variant="Linear" size={24} />
+        <TouchableOpacity>
+          <ShoppingCart color={colors.darkred()} variant="Linear" size={24} />
+        </TouchableOpacity>
       </View>
       <View style={styles.header}>
         <View style={styles.bar}>
@@ -166,42 +168,3 @@ const category = StyleSheet.create({
     lineHeight: 18,
   },
 });
-
-// const itemHorizontal = StyleSheet.create({
-//   cardItem: {
-//     width: 280,
-//   },
-//   cardImage: {
-//     width: '100%',
-//     height: 200,
-//     borderRadius: 5,
-//   },
-//   cardContent: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     padding: 15,
-//   },
-//   cardInfo: {
-//     justifyContent: 'flex-end',
-//     height: '100%',
-//     gap: 10,
-//     maxWidth: '60%',
-//   },
-//   cardTitle: {
-//     fontFamily: fontType['Pjs-Bold'],
-//     fontSize: 14,
-//     color: colors.red(),
-//   },
-//   cardText: {
-//     fontSize: 10,
-//     color: colors.red(),
-//     fontFamily: fontType['Pjs-Medium'],
-//   },
-//   cardIcon: {
-//     backgroundColor: colors.red(),
-//     padding: 5,
-//     borderColor: colors.white(),
-//     borderWidth: 0.5,
-//     borderRadius: 5,
-//   },
-// });

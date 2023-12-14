@@ -1,11 +1,54 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { ArrowLeft } from 'iconsax-react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { ArrowLeft, AddSquare, Add } from 'iconsax-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { fontType, colors } from '../../theme';
-import axios from 'axios';
+import ImagePicker from 'react-native-image-crop-picker';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 const AddBlogForm = () => {
+    const handleImagePick = async () => {
+        ImagePicker.openPicker({
+            width: 800,
+            height: 750,
+            cropping: true,
+        })
+            .then(image => {
+                console.log(image);
+                setImage(image.path);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    };
+
+    const handleUpload = async () => {
+        let filename = image.substring(image.lastIndexOf('/') + 1);
+        const extension = filename.split('.').pop();
+        const name = filename.split('.').slice(0, -1).join('.');
+        filename = name + Date.now() + '.' + extension;
+        const reference = storage().ref(`blogimages/${filename}`);
+
+        setLoading(true);
+        try {
+            await reference.putFile(image);
+            const url = await reference.getDownloadURL();
+            await firestore().collection('blog').add({
+                username: blogData.username,
+                category: blogData.category,
+                image: url,
+                caption: blogData.caption,
+                createdAt: new Date(),
+            });
+            setLoading(false);
+            console.log('Blog added!');
+            navigation.navigate('Profile');
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const dataCategory = [
         { id: 1, name: "Satisfying" },
         { id: 2, name: "Disappointing" },
@@ -21,119 +64,143 @@ const AddBlogForm = () => {
             [key]: value,
         });
     };
-    const handleUpload = async () => {
-        setLoading(true);
-        try {
-            await axios.post('https://6572a1e0d61ba6fcc015471c.mockapi.io/gars/post/', {
-                username: blogData.username,
-                category: blogData.category,
-                image,
-                caption: blogData.caption,
-                createdAt: new Date(),
-            })
-                .then(function (response) {
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-            setLoading(false);
-            navigation.navigate('Profile');
-        } catch (e) {
-            console.log(e);
-        }
-    };
 
     const [loading, setLoading] = useState(false);
     const [image, setImage] = useState(null);
     const navigation = useNavigation();
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <ArrowLeft color={colors.black()} variant="Linear" size={24} />
-                </TouchableOpacity>
-                <View style={{ flex: 1, alignItems: "center" }}>
-                    <Text style={styles.title}>Share Your Experience</Text>
-                </View>
-            </View>
-            <ScrollView
-                contentContainerStyle={{
-                    paddingHorizontal: 24,
-                    paddingVertical: 10,
-                    gap: 10,
-                }}>
-                <View style={textInput.borderDashed}>
-                    <TextInput
-                        placeholder="Username"
-                        value={blogData.username}
-                        onChangeText={(text) => handleChange("username", text)}
-                        placeholderTextColor={colors.grey(0.6)}
-                        multiline
-                        style={textInput.username} />
-                </View>
-                <View style={[textInput.borderDashed]}>
-                    <Text
-                        style={{
-                            fontSize: 12,
-                            fontFamily: fontType["Pjs-Regular"],
-                            color: colors.grey(0.6),
-                        }}>
-                        Category
-                    </Text>
-                    <View style={category.container}>
-                        {dataCategory.map((item, index) => {
-                            const bgColor =
-                                item.id === blogData.category.id
-                                    ? colors.red(0.5)
-                                    : colors.red(0.12);
-                            const color =
-                                item.id === blogData.category.id
-                                    ? colors.white()
-                                    : colors.black();
-                            return (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() =>
-                                        handleChange("category", { id: item.id, name: item.name })}
-                                    style={[category.item, { backgroundColor: bgColor }]}>
-                                    <Text style={[category.name, { color: color }]}>
-                                        {item.name}
-                                    </Text>
-                                </TouchableOpacity>
-                            );
-                        })}
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            enabled>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <ArrowLeft color={colors.black()} variant="Linear" size={24} />
+                    </TouchableOpacity>
+                    <View style={{ flex: 1, alignItems: 'center' }}>
+                        <Text style={styles.title}>Share Your Experience</Text>
                     </View>
                 </View>
-                <View style={[textInput.borderDashed]}>
-                    <TextInput
-                        placeholder="Image"
-                        value={image}
-                        onChangeText={(text) => setImage(text)}
-                        placeholderTextColor={colors.grey(0.6)}
-                        style={textInput.image} />
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingHorizontal: 24,
+                        paddingVertical: 10,
+                        gap: 10,
+                    }}>
+                    <View style={textInput.borderDashed}>
+                        <TextInput
+                            placeholder="Username"
+                            value={blogData.username}
+                            onChangeText={text => handleChange('username', text)}
+                            placeholderTextColor={colors.grey(0.6)}
+                            multiline
+                            style={textInput.username}
+                        />
+                    </View>
+
+                    <View style={[textInput.borderDashed]}>
+                        <Text style={category.title}>Category</Text>
+                        <View style={category.container}>
+                            {dataCategory.map((item, index) => {
+                                const bgColor =
+                                    item.id === blogData.category.id
+                                        ? colors.red(0.5)
+                                        : colors.red(0.12);
+                                const color =
+                                    item.id === blogData.category.id
+                                        ? colors.white()
+                                        : colors.grey();
+                                return (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() =>
+                                            handleChange('category', { id: item.id, name: item.name })
+                                        }
+                                        style={[category.item, { backgroundColor: bgColor }]}>
+                                        <Text style={[category.name, { color: color }]}>
+                                            {item.name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                    </View>
+                    {image ? (
+                        <View style={{ position: 'relative' }}>
+                            <FastImage
+                                style={{ width: '100%', height: 300, borderRadius: 5 }}
+                                source={{
+                                    uri: image,
+                                    headers: { Authorization: 'someAuthToken' },
+                                    priority: FastImage.priority.high,
+                                }}
+                                resizeMode={FastImage.resizeMode.cover}
+                            />
+                            <TouchableOpacity
+                                style={{
+                                    position: 'absolute',
+                                    top: -5,
+                                    right: -5,
+                                    backgroundColor: colors.red(),
+                                    borderRadius: 25,
+                                }}
+                                onPress={() => setImage(null)}>
+                                <Add
+                                    size={20}
+                                    variant="Linear"
+                                    color={colors.white()}
+                                    style={{ transform: [{ rotate: '45deg' }] }}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <TouchableOpacity onPress={handleImagePick}>
+                            <View
+                                style={[
+                                    textInput.borderDashed,
+                                    {
+                                        gap: 10,
+                                        paddingVertical: 30,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    },
+                                ]}>
+                                <AddSquare color={colors.grey(0.6)} variant="Linear" size={42} />
+                                <Text
+                                    style={{
+                                        fontFamily: fontType['Pjs-Regular'],
+                                        fontSize: 12,
+                                        color: colors.grey(0.6),
+                                    }}>
+                                    Upload Photo
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                    <View style={[textInput.borderDashed, { minHeight: 250 }]}>
+                        <TextInput
+                            placeholder="Caption"
+                            value={blogData.caption}
+                            onChangeText={text => handleChange('caption', text)}
+                            placeholderTextColor={colors.grey(0.6)}
+                            multiline
+                            style={textInput.caption}
+                        />
+                    </View>
+                </ScrollView>
+                <View style={styles.bottomBar}>
+                    <TouchableOpacity style={styles.button} onPress={handleUpload}>
+                        <Text style={styles.buttonLabel}>Upload</Text>
+                    </TouchableOpacity>
                 </View>
-                <View style={[textInput.borderDashed, { minHeight: 400 }]}>
-                    <TextInput
-                        placeholder="Caption"
-                        value={blogData.caption}
-                        onChangeText={(text) => handleChange("caption", text)}
-                        placeholderTextColor={colors.grey(0.6)}
-                        multiline
-                        style={textInput.caption} />
-                </View>
-            </ScrollView>
-            <View style={styles.bottomBar}>
-                <TouchableOpacity style={styles.button} onPress={handleUpload}>
-                    <Text style={styles.buttonLabel}>Upload</Text>
-                </TouchableOpacity>
+                {loading && (
+                    <View style={styles.loadingOverlay}>
+                        <ActivityIndicator size="large" color={colors.blue()} />
+                    </View>
+                )}
             </View>
-            {loading && (
-                <View style={styles.loadingOverlay}>
-                    <ActivityIndicator size="large" color={colors.red()} />
-                </View>
-            )}
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

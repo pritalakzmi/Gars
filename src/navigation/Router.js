@@ -1,9 +1,10 @@
 import React from 'react';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Home, Discover, Profile, Search, AddBlogForm, EditBlogForm, BlogPost } from '../screens';
+import { Home, Discover, Profile, Search, AddBlogForm, EditBlogForm, BlogPost, BlogDetail} from '../screens';
 import { Home2, ProfileCircle, TruckFast } from 'iconsax-react-native';
 import { fontType, colors } from '../theme';
+import { BlogOrder } from '../../data';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -94,6 +95,18 @@ const Router = () => {
         }}
       />
       <Stack.Screen
+        name="BlogDetail"
+        component={BlogDetail}
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          animationTypeForReplace: 'pop',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          ...TransitionPresets.SlideFromRightIOS,
+        }}
+      />
+      <Stack.Screen
         name="SearchPage"
         component={Search}
         options={{
@@ -102,7 +115,7 @@ const Router = () => {
         }}
       />
       <Stack.Screen
-        name="AddBlog"
+        name="AddPost"
         component={AddBlogForm}
         options={{
           headerShown: false,

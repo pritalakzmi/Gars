@@ -3,7 +3,6 @@ import FastImage from 'react-native-fast-image';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../theme';
-import { formatNumber } from '../utils/formatNumber';
 
 const ItemPost = ({item}) => {
   const navigation = useNavigation();
@@ -34,8 +33,6 @@ const ItemPost = ({item}) => {
           </View>
         </View>
         <View style={styles.cardInfo}>
-        <Text style={styles.cardText}>{formatNumber(item?.createdAt)}</Text>
-          {/* <Text style={styles.cardText}>{formatDate(item?.createdAt)}</Text> */}
           <Text style={styles.cardText}>{item?.totalComments}</Text>
         </View>
       </View>
@@ -77,8 +74,8 @@ const styles = StyleSheet.create({
     color: colors.grey(0.6),
   },
   cardImage: {
-    width: 0,
-    height: 0,
+    width: 360,
+    height: 300,
     borderRadius: 10,
     resizeMode: 'cover',
   },

@@ -1,41 +1,10 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import React from 'react';
 import { BlogOrder } from '../../../data';
-import { ItemSmall } from '../../components';
+import { ItemBookmark } from '../../components';
 import { SearchNormal1 } from 'iconsax-react-native';
 import { fontType, colors } from '../../theme';
 
-// const data = [
-//   {id: 1, label: 'react'},
-//   {id: 2, label: 'wwdc'},
-//   {id: 3, label: 'best sneaker'},
-//   {id: 4, label: 'setup pc'},
-//   {id: 5, label: 'car'},
-// ];
-
-// const ItemRecent = ({item}) => {
-//   return (
-//     <View style={recent.button}>
-//       <Text style={recent.label}>{item.label}</Text>
-//     </View>
-//   );
-// };
-// const FlatListRecent = () => {
-//   const renderItem = ({item}) => {
-//     return <ItemRecent item={item} />;
-//   };
-//   return (
-//     <FlatList
-//       data={data}
-//       keyExtractor={item => item.id}
-//       renderItem={item => renderItem({...item})}
-//       ItemSeparatorComponent={() => <View style={{width: 10}} />}
-//       contentContainerStyle={{paddingHorizontal: 24, paddingVertical: 10}}
-//       horizontal
-//       showsHorizontalScrollIndicator={false}
-//     />
-//   );
-// };
 const MyOrder = () => {
   const recentBlog = BlogOrder.slice(5);
   return (
@@ -71,7 +40,6 @@ const styles = StyleSheet.create({
     height: 52,
     elevation: 8,
     paddingTop: 10,
-    // paddingBottom: ,
   },
   bar: {
     flexDirection: 'row',
