@@ -12,16 +12,7 @@ export const CategoryList = [
       categoryName: 'Kids',
     },
   ];
-  // export const ScaleList = [
-  //   {
-  //     id: 1,
-  //     categoryName: 'Satisfying',
-  //   },
-  //   {
-  //     id: 2,
-  //     categoryName: 'Disappointing',
-  //   },
-  // ];
+
   export const BlogKids = [
     {
       id: 1,
